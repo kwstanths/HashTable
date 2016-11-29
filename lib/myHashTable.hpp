@@ -31,6 +31,10 @@ namespace HashTable {
                   delete temp;
             }
 
+            unsigned long int getHash(T _value) const {
+                  return std::hash<T>{}(_value) % size;
+            }
+
       public:
             /*
                   Initialize a hash table with size _size
@@ -61,10 +65,10 @@ namespace HashTable {
                   clear();
             }
 
-            unsigned long int getHash(T _value) const {
-                  return std::hash<T>{}(_value) % size;
-            }
-
+            /*
+                  Insert an element to the hashtable. If rehashing is enabled when HashTable was constructed then this operation
+                  might take more time then expected in some cases.
+            */
             bool insert(T _value) {
                   unsigned long int hash_value = getHash(_value);
                   bool ret = false;
@@ -79,8 +83,11 @@ namespace HashTable {
                   if (ret) elements++;
 
                   if ((max_load > 0) && (getLoad() >= max_load)) rehash();
-      }
+            }
 
+            /*
+                  Search for an element in the HashTable
+            */
             bool find(T _value) const {
                   unsigned long int hash_value = getHash(_value);
 
@@ -91,6 +98,9 @@ namespace HashTable {
                   return true;
             }
 
+            /*
+                  Remove an element from the hash table
+            */
             bool remove(T _value) {
                   unsigned long int hash_value = getHash(_value);
 
@@ -101,18 +111,31 @@ namespace HashTable {
                   return false;
             }
 
+            /*
+                  Get hash table's current size. If rehashing is enabled then this value might differ from the one given
+                  during object construction
+            */
             unsigned long int getSize() const {
                   return size;
             }
 
+            /*
+                  Get number of elements inserted in the hash table
+            */
             unsigned long int getNumberOfElements() const {
                   return elements;
             }
 
+            /*
+                  Get the load of the hash table as (inserted elements/ size)
+            */
             double getLoad() const {
                   return (1.0*elements) / (1.0*size);
             }
 
+            /*
+                  Prints the hash table in a relatively nice format
+            */
             void pretty_print() const {
                   std::cout << "Hash table:" << std::endl;;
                   for(typename std::vector<mns::list::list<T> *>::iterator itr = hashtable->begin(); itr!=hashtable->end(); ++itr){
@@ -122,6 +145,9 @@ namespace HashTable {
                   }
             }
 
+            /*
+                  Removes all the inserted elements
+            */
             void clear(){
                   for(typename std::vector<mns::list::list<T> *>::iterator itr = hashtable->begin(); itr!=hashtable->end(); ++itr) {
                         delete *itr;
@@ -129,6 +155,7 @@ namespace HashTable {
                   }
                   elements = 0;
             }
+
       };
 
 }

@@ -44,7 +44,7 @@ void testhash(const mns::HashTable::HashTable<int>& test_hashtable, int numbers)
 }
 
 int main(int argc, char ** argv){
-
+   
 	mns::HashTable::HashTable<std::string> testhashtable(15);
 	testhashtable.insert("alexis");
 	testhashtable.insert("ale2xis");
