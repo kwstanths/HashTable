@@ -9,7 +9,7 @@
 namespace mns{
 
 namespace HashTable {
-      //TODO binary trees insted of list? another hashtable?
+      //TODO binary trees instead of list? another hashtable?
       template<typename T> class HashTable{
       private:
             std::vector<mns::list::list<T> * > * hashtable;
@@ -17,11 +17,18 @@ namespace HashTable {
             double max_load;
 
             void rehash(){
-                  std::cout << "Rehashing... " << std::flush;
-
-                  std::cout << " TODO " << std::flush;
-
-                  std::cout << "Done" << std::endl;
+                  size = 2 * size;
+                  std::vector<mns::list::list<T> * > *temp;
+                  temp = hashtable;
+                  hashtable = new std::vector<mns::list::list<T> * >(size, NULL);
+                  elements = 0;
+                  for(typename std::vector<mns::list::list<T> *>::iterator itr = temp->begin(); itr!=temp->end(); ++itr){
+                        if (*itr != NULL)
+                              for(typename mns::list::list<T>::iterator itr2 = (*itr)->begin(); itr2 != (*itr)->end(); itr2+=1) {
+                                    insert(*itr2);
+                              }
+                  }
+                  delete temp;
             }
 
       public:
@@ -51,7 +58,6 @@ namespace HashTable {
 
             bool insert(T _value) {
                   unsigned long int hash_value = getHash(_value);
-
                   bool ret = false;
                   if (hashtable->at(hash_value) == NULL) {
                         hashtable->at(hash_value) = new mns::list::list<T>(_value);
@@ -64,7 +70,7 @@ namespace HashTable {
                   if (ret) elements++;
 
                   if ((max_load > 0) && (getLoad() >= max_load)) rehash();
-            }
+      }
 
             bool find(T _value) const {
                   unsigned long int hash_value = getHash(_value);
