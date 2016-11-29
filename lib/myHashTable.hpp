@@ -32,6 +32,10 @@ namespace HashTable {
             }
 
       public:
+            /*
+                  Initialize a hash table with size _size
+                  No matter how many elements you insert, the hashtable's size won't change
+            */
             HashTable(unsigned long int _size){
                   if (_size <= 0) throw std::out_of_range("Hash table size must be a positive number");
                   hashtable = new std::vector<mns::list::list<T> * >(_size, NULL);
@@ -40,6 +44,11 @@ namespace HashTable {
                   max_load = -1;
             }
 
+            /*
+                  Initialize a hash table with size _size and max load (elements/size) equal to _max_load
+                  When an element is inserted if elements/size > _max_load then a rehashing will occur with
+                  new hashtable size equal to double the previous size
+            */
             HashTable(unsigned long int _size, double _max_load){
                   if (_size <= 0) throw std::out_of_range("Hash table size must be a positive number");
                   hashtable = new std::vector<mns::list::list<T> * >(_size, NULL);
