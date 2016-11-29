@@ -44,7 +44,7 @@ void testhash(const mns::HashTable::HashTable<int>& test_hashtable, int numbers)
 }
 
 int main(int argc, char ** argv){
-   
+
 	mns::HashTable::HashTable<std::string> testhashtable(15);
 	testhashtable.insert("alexis");
 	testhashtable.insert("ale2xis");
@@ -181,32 +181,40 @@ int main(int argc, char ** argv){
 	testhashtable3.insert("from");
 	testhashtable3.insert("the");
 	testhashtable3.insert("other");
+	testhashtable3.pretty_print();
 	testhashtable3.insert("side");
 	testhashtable3.insert("I");
+	testhashtable3.insert("must");
+	testhashtable3.insert("'ve'");
+	testhashtable3.insert("called");
+	testhashtable3.pretty_print();
+	testhashtable3.insert("a");
+	testhashtable3.pretty_print();
 
-	int numbers = 40000;
-	std::vector<int> myvector;
-	std::cout << "Creating arrays... " << std::flush;
-	mns::HashTable::HashTable<int> myhashtable(numbers);
-	mns::HashTable::HashTable<int> myhashtable1(5,1);
-	struct timeval time_start, time_stop;
 
-	gettimeofday(&time_start, NULL);
-	for(int i=0; i<numbers; i++) myhashtable.insert(i);
-	gettimeofday(&time_stop, NULL);
-	std::cout << "Creating without rehashing: " << 1000 * (time_stop.tv_sec - time_start.tv_sec) + (time_stop.tv_usec - time_start.tv_usec) / 1000 << " msec" << std::endl;
-
-	gettimeofday(&time_start, NULL);
-	for(int i=0; i<numbers; i++) myhashtable1.insert(i);
-	gettimeofday(&time_stop, NULL);
-	std::cout << "Creating with rehashing: " << 1000 * (time_stop.tv_sec - time_start.tv_sec) + (time_stop.tv_usec - time_start.tv_usec) / 1000 << " msec" << std::endl;
-
-	gettimeofday(&time_start, NULL);
-	for(int i=0; i<numbers; i++) myvector.push_back(i);
-	gettimeofday(&time_stop, NULL);
-	std::cout << "Creating vector: " << 1000 * (time_stop.tv_sec - time_start.tv_sec) + (time_stop.tv_usec - time_start.tv_usec) / 1000 << " msec" << std::endl;
-
-	testhash(myhashtable, myhashtable.getSize());
-	testhash(myhashtable1, myhashtable1.getSize());
-	testvector(myvector, myvector.size());
+	// int numbers = 40000;
+	// std::vector<int> myvector;
+	// std::cout << "Creating arrays... " << std::flush;
+	// mns::HashTable::HashTable<int> myhashtable(numbers);
+	// mns::HashTable::HashTable<int> myhashtable1(5,1);
+	// struct timeval time_start, time_stop;
+	//
+	// gettimeofday(&time_start, NULL);
+	// for(int i=0; i<numbers; i++) myhashtable.insert(i);
+	// gettimeofday(&time_stop, NULL);
+	// std::cout << "Creating without rehashing: " << 1000 * (time_stop.tv_sec - time_start.tv_sec) + (time_stop.tv_usec - time_start.tv_usec) / 1000 << " msec" << std::endl;
+	//
+	// gettimeofday(&time_start, NULL);
+	// for(int i=0; i<numbers; i++) myhashtable1.insert(i);
+	// gettimeofday(&time_stop, NULL);
+	// std::cout << "Creating with rehashing: " << 1000 * (time_stop.tv_sec - time_start.tv_sec) + (time_stop.tv_usec - time_start.tv_usec) / 1000 << " msec" << std::endl;
+	//
+	// gettimeofday(&time_start, NULL);
+	// for(int i=0; i<numbers; i++) myvector.push_back(i);
+	// gettimeofday(&time_stop, NULL);
+	// std::cout << "Creating vector: " << 1000 * (time_stop.tv_sec - time_start.tv_sec) + (time_stop.tv_usec - time_start.tv_usec) / 1000 << " msec" << std::endl;
+	//
+	// testhash(myhashtable, myhashtable.getSize());
+	// testhash(myhashtable1, myhashtable1.getSize());
+	// testvector(myvector, myvector.size());
 }
