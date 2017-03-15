@@ -4,11 +4,12 @@
 #include <iostream>
 #include <vector>
 
-#include "mylist.hpp"
+#include "myList.hpp"
 
 namespace mns{
 
 namespace HashTable {
+
       //TODO binary trees instead of list?
       template<typename T> class HashTable{
       private:
@@ -18,7 +19,7 @@ namespace HashTable {
 
             void rehash(){
                   size = 2 * size;
-                  std::vector<mns::list::list<T> * > *temp;
+                  std::vector<mns::list::list<T> * > * temp;
                   temp = hashtable;
                   hashtable = new std::vector<mns::list::list<T> * >(size, NULL);
                   elements = 0;
@@ -155,11 +156,9 @@ namespace HashTable {
                   }
                   elements = 0;
             }
-
       };
 
 }
-
 }
 
 #endif

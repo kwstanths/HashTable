@@ -185,13 +185,19 @@ int main(int argc, char ** argv){
 	testhashtable3.insert("side");
 	testhashtable3.insert("I");
 	testhashtable3.insert("must");
-	testhashtable3.insert("'ve'");
+	testhashtable3.insert("'ve");
 	testhashtable3.insert("called");
 	testhashtable3.pretty_print();
 	testhashtable3.insert("a");
+	testhashtable3.insert("thousand");
+	testhashtable3.insert("times");
+	testhashtable3.insert("to");
+	testhashtable3.insert("tell");
+	testhashtable3.insert("you");
 	testhashtable3.pretty_print();
-
-
+	//
+	// std::cout << "\n---" << std::endl;
+	//
 	// int numbers = 40000;
 	// std::vector<int> myvector;
 	// std::cout << "Creating arrays... " << std::flush;
