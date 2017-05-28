@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 
-#include "mylist.hpp"
+#include "myList.hpp"
 
 namespace mns{
 namespace HashTable {
@@ -18,7 +18,7 @@ namespace HashTable {
 
             void rehash(){
                   size = 2 * size;
-                  std::vector<mns::list::list<T> * > *temp;
+                  std::vector<mns::list::list<T> * > * temp;
                   temp = hashtable;
                   hashtable = new std::vector<mns::list::list<T> * >(size, NULL);
                   elements = 0;
