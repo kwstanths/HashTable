@@ -7,8 +7,8 @@
 #include "mylist.hpp"
 
 namespace mns{
-
 namespace HashTable {
+
       //TODO binary trees instead of list?
       template<typename T> class HashTable{
       private:
@@ -155,11 +155,9 @@ namespace HashTable {
                   }
                   elements = 0;
             }
-
       };
 
 }
-
 }
 
 #endif
