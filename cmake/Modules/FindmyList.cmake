@@ -1,4 +1,4 @@
-# - Try to find myList
+# - Try to find mylist
 # Once done this will define
 #  myList_FOUND - System has myList
 #  myList_INCLUDE_DIRS - The myList include directories
@@ -20,7 +20,7 @@ if(myList_INCLUDE_DIR AND myList_LIBRARY)
 	set(myList_FOUND 1)
 endif()
 
-# Handle the QUIETLY and REQUIRED arguments and set LOGGING_FOUND to TRUE if all myListed variables are TRUE
+# Handle the QUIETLY and REQUIRED arguments and set LOGGING_FOUND to TRUE if all mylisted variables are TRUE
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(myList DEFAULT_MSG myList_INCLUDE_DIR myList_LIBRARY)
 
@@ -29,5 +29,5 @@ if(myList_FOUND)
 	set(myList_INCLUDE_DIRS ${myList_INCLUDE_DIR} )
 endif()
 
-# Tell cmake myLists to ignore the "local" variables
+# Tell cmake mylists to ignore the "local" variables
 mark_as_advanced(myList_INCLUDE_DIR myList_LIBRARY)

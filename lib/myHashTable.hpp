@@ -7,157 +7,272 @@
 #include "myList.hpp"
 
 namespace mns{
-namespace HashTable {
 
-      //TODO binary trees instead of list?
-      template<typename T> class HashTable{
+
+      /**
+            TODO Implement the iterator operators
+      */
+      template<typename Key, typename Value> class HashTable{
       private:
-            std::vector<mns::list::list<T> * > * hashtable;
-            unsigned long int size, elements;
-            double max_load;
 
-            void rehash(){
-                  size = 2 * size;
-                  std::vector<mns::list::list<T> * > * temp;
-                  temp = hashtable;
-                  hashtable = new std::vector<mns::list::list<T> * >(size, NULL);
-                  elements = 0;
-                  for(typename std::vector<mns::list::list<T> *>::iterator itr = temp->begin(); itr!=temp->end(); ++itr){
-                        if (*itr != NULL)
-                              for(typename mns::list::list<T>::iterator itr2 = (*itr)->begin(); itr2 != (*itr)->end(); itr2+=1) {
-                                    insert(*itr2);
+            class HashElement {
+                  friend class HashTable;
+            private:
+                  Key key_;
+                  Value value_;
+            public:
+                  HashElement(Key key, Value value): key_(key), value_(value) {};
+
+                  bool operator==(const HashElement& other) {
+                        return key_ == other.key_;
+                  }
+            };
+
+            class HashIterator : public std::iterator<std::forward_iterator_tag, Key, Value> {
+			friend class HashTable;
+			friend class HashElement;
+		private:
+			HashElement * pointed_;
+                  size_t pointed_index_;
+			HashIterator(HashElement * pointed, size_t index): pointed_(pointed), pointed_index_(index) { }
+
+		public:
+                  Key& GetKey() {
+                        return pointed_->key_;
+                  }
+
+			Value& GetValue() {
+				return pointed_->value_;
+			}
+
+			// const HashIterator& operator++(){
+			// 	pointed_ = pointed_->next;
+			// 	return *this;
+			// }
+
+			// const HashIterator& operator+=(int amount){
+			// 	int i = 0;
+			// 	while(i++ < amount) {
+			// 		pointed_ = pointed_->next;
+			// 	}
+			// }
+
+			bool operator!=(const HashIterator& other) const {
+				return this->pointed_ != other.pointed_;
+			}
+
+			bool operator==(const HashIterator& other) const {
+				return this->pointed_ == other.pointed_;
+			}
+		};
+
+            std::vector<List<HashElement> * > hashtable_;
+            size_t size_, elements_;
+            double max_load_;
+
+            /**
+                  Double the size of the hashtable and re-insert all the elements
+            */
+            void Rehash() {
+                  size_ = 2 * size_;
+                  std::vector<List<HashElement> *> temp;
+                  temp = hashtable_;
+                  hashtable_ = std::vector<List<HashElement> *> (size_, nullptr);
+                  elements_ = 0;
+                  for(typename std::vector<List<HashElement> *>::iterator itr = temp.begin(); itr!=temp.end(); ++itr){
+                        if (*itr != nullptr)
+                              for(typename List<HashElement>::iterator itr2 = (*itr)->begin(); itr2 != (*itr)->end(); ++itr2) {
+                                    Insert((*itr2).key_, (*itr2).value_);
                               }
                   }
-                  delete temp;
             }
 
-            unsigned long int getHash(T _value) const {
-                  return std::hash<T>{}(_value) % size;
+            /**
+                  Get the hash value for a key
+                  @param key The key to get the hash
+                  @return The hash value
+            */
+            size_t GetHash(Key key) const {
+                  return std::hash<Key>{}(key) % size_;
             }
 
       public:
+            /**
+                  The HashTable's iterator
+            */
+            typedef HashIterator iterator;
+
             /*
-                  Initialize a hash table with size _size
+                  Initialize a hash table with size
                   No matter how many elements you insert, the hashtable's size won't change
             */
-            HashTable(unsigned long int _size){
-                  if (_size <= 0) throw std::out_of_range("Hash table size must be a positive number");
-                  hashtable = new std::vector<mns::list::list<T> * >(_size, NULL);
-                  size = _size;
-                  elements = 0;
-                  max_load = -1;
+            HashTable(size_t size){
+                  if (size <= 0) throw std::out_of_range("Hash table size must be a positive number");
+                  hashtable_ = std::vector<List<HashElement> * >(size, nullptr);
+                  size_ = size;
+                  elements_ = 0;
+                  max_load_ = -1;
             }
 
             /*
-                  Initialize a hash table with size _size and max load (elements/size) equal to _max_load
-                  When an element is inserted if elements/size > _max_load then a rehashing will occur with
-                  the new hashtable size equal to double the previous size
+                  Initialize a hash table with size and max load (elements/size) equal to max_load
+                  When an element is inserted if elements/size > max_load then a rehashing will occur 
+                  with the new hashtable size equal to double the previous size
             */
-            HashTable(unsigned long int _size, double _max_load){
-                  if (_size <= 0) throw std::out_of_range("Hash table size must be a positive number");
-                  hashtable = new std::vector<mns::list::list<T> * >(_size, NULL);
-                  size = _size;
-                  elements = 0;
-                  max_load = _max_load;
+            HashTable(size_t size, double max_load){
+                  if (size <= 0) throw std::out_of_range("Hash table size must be a positive number");
+                  hashtable_ = std::vector<List<HashElement> * >(size, nullptr);
+                  size_ = size;
+                  elements_ = 0;
+                  max_load_ = max_load;
             }
 
             ~HashTable(){
-                  clear();
+                  Clear();
             }
 
             /*
-                  Insert an element to the hashtable. If rehashing is enabled when HashTable was constructed then this operation
-                  might take more time then expected in some cases.
+                  Insert an element to the hashtable. If rehashing is enabled when HashTable was constructed 
+                  then this operation might take more time then expected in some cases.
+                  @param key The key of the value to be inserted
+                  @param value The value to be inserted
+                  @return true = Ok
             */
-            bool insert(T _value) {
-                  unsigned long int hash_value = getHash(_value);
+            bool Insert(Key key, Value value) {
+                  size_t hash_value = GetHash(key);
+                  
+                  HashElement new_elem(key, value);
                   bool ret = false;
-                  if (hashtable->at(hash_value) == NULL) {
-                        hashtable->at(hash_value) = new mns::list::list<T>(_value);
+                  if (hashtable_.at(hash_value) == nullptr) {
+                        hashtable_.at(hash_value) = new List<HashElement>(new_elem);
                         ret = true;
-                  }
-                  else if (hashtable->at(hash_value)->find_forward(_value) == -1) {
-                        hashtable->at(hash_value)->push_top(_value);
-                        ret = true;
-                  }
-                  if (ret) elements++;
+                  } else {
+                        List<HashElement> * hashed_elems = hashtable_.at(hash_value);
+                        
+                        if (hashed_elems->FindForward(new_elem) == hashed_elems->end()){
+                              /* If element does not exist in the bucket list */
+                              hashed_elems->PushTop(new_elem);
+                              ret = true;
+                        }
 
-                  if ((max_load > 0) && (getLoad() >= max_load)) rehash();
+                        /* If it exists, dont do anything */
+                  }
+                  
+                  if (ret) elements_++;
+
+                  if ((max_load_ > 0) && (GetLoad() >= max_load_)) Rehash();
+            }
+
+            /**
+                  Get the beginning of the iterator
+            */
+            HashIterator begin() {
+                  size_t i = 0;
+                  while(hashtable_.at(i) == nullptr && i < hashtable_.size()) i++;
+                  if (i == hashtable_.size()) return HashIterator(nullptr, 0);
+
+                  HashElement * first = hashtable_.at(i)->PeekTop();
+                  return HashIterator(first, i);
+            }
+
+            /**
+                  Get the end of the iterator. Incrementing or derefercing, or in any way using it,
+                  expect for comparison, is not recommended            
+            */
+            HashIterator end() {
+                  return HashIterator(nullptr, 0);
             }
 
             /*
-                  Search for an element in the HashTable
+                  Search for an element in the HashTable, if not found you get the end() of the 
+                  iterator
+                  @param key The key to be searched
+                  @return An iterator to the element, use GetKey(), and GetValue()
             */
-            bool find(T _value) const {
-                  unsigned long int hash_value = getHash(_value);
+            HashIterator Find(Key key) const {
+                  size_t hash_value = GetHash(key);
 
-                  if (hashtable->at(hash_value) == NULL) return false;
-                  int ret = hashtable->at(hash_value)->find_forward(_value);
+                  if (hashtable_.at(hash_value) == nullptr) return HashIterator(nullptr, 0);
 
-                  if (ret == -1) return false;
-                  return true;
+                  List<HashElement> * hashed_elems = hashtable_.at(hash_value);
+                  typename List<HashElement>::iterator itr = hashed_elems->FindForward(HashElement(key, Value()));
+                  if (itr != hashed_elems->end()) {
+                        return HashIterator(&(*itr), hash_value);
+                  }
+
+                  return HashIterator(nullptr, 0);
             }
 
             /*
                   Remove an element from the hash table
+                  @param key The key of the element to remove
+                  @return true = Removed, false = Not found
             */
-            bool remove(T _value) {
-                  unsigned long int hash_value = getHash(_value);
+            bool Remove(Key key) {
+                  size_t hash_value = GetHash(key);
 
                   bool ret = false;
-                  if (hashtable->at(hash_value) != NULL) ret = hashtable->at(hash_value)->remove(_value);
-                  if (ret) elements--;
+                  if (hashtable_.at(hash_value) != NULL) 
+                        ret = hashtable_.at(hash_value)->Remove(HashElement(key, Value()));
+                  
+                  if (ret) {
+                        elements_--;
+                        return false;
+                  }
 
-                  return false;
+                  return true;
             }
 
             /*
                   Get hash table's current size. If rehashing is enabled then this value might differ from the one given
                   during object construction
+                  @return The size
             */
-            unsigned long int getSize() const {
-                  return size;
+            size_t GetSize() const {
+                  return size_;
             }
 
             /*
                   Get number of elements inserted in the hash table
+                  @return Number of elements
             */
-            unsigned long int getNumberOfElements() const {
-                  return elements;
+            size_t GetNumberOfElements() const {
+                  return elements_;
             }
 
             /*
                   Get the load of the hash table as (inserted elements/ size)
+                  @return Table load
             */
-            double getLoad() const {
-                  return (1.0*elements) / (1.0*size);
+            double GetLoad() const {
+                  return (1.0*elements_) / (1.0*size_);
             }
 
             /*
                   Prints the hash table in a relatively nice format
             */
-            void pretty_print() const {
-                  std::cout << "Hash table:" << std::endl;;
-                  for(typename std::vector<mns::list::list<T> *>::iterator itr = hashtable->begin(); itr!=hashtable->end(); ++itr){
-                        if (*itr != NULL)
-                              for(typename mns::list::list<T>::iterator itr2 = (*itr)->begin(); itr2 != (*itr)->end(); itr2+=1) std:: cout << (*itr2) << " -> ";
+            void PrettyPrint() const {
+                  std::cout << "Hash table:" << std::endl;
+                  for(typename std::vector<List<HashElement> * >::const_iterator itr = hashtable_.begin(); itr!=hashtable_.end(); ++itr){
+                        if (*itr != nullptr)
+                              for (typename List<HashElement>::iterator itr2 = (*itr)->begin(); itr2 != (*itr)->end(); ++itr2) 
+                                    std:: cout << "(" << (*itr2).key_ << "," << (*itr2).value_ << ")" << " -> ";
                         std::cout << "null" << std::endl;
                   }
             }
 
             /*
-                  Removes all the inserted elements
+                  Removes all the inserted elements in the table
             */
-            void clear(){
-                  for(typename std::vector<mns::list::list<T> *>::iterator itr = hashtable->begin(); itr!=hashtable->end(); ++itr) {
+            void Clear(){
+                  for(typename std::vector<List<HashElement> *>::iterator itr = hashtable_.begin(); itr!=hashtable_.end(); ++itr) {
                         delete *itr;
-                        *itr = NULL;
+                        *itr = nullptr;
                   }
-                  elements = 0;
+                  elements_ = 0;
             }
       };
 
-}
 }
 
 #endif
