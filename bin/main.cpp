@@ -45,6 +45,8 @@ void testhash(const mns::HashTable<int, int>& test_hashtable, int numbers){
 
 int main(int argc, char ** argv){
 
+	std::cout << "\n Insert, Find and remove ---" << std::endl;	
+
 	mns::HashTable<std::string, int> testhashtable(15);
 	testhashtable.Insert("alexis", 1);
 	testhashtable.Insert("ale2xis", 2);
@@ -151,7 +153,7 @@ int main(int argc, char ** argv){
 	itr2 = testhashtable1.Find(0);
 	if (itr2!=testhashtable1.end()) std::cout << itr2.GetKey() << std::endl;
 
-	std::cout << "\n---" << std::endl;
+	std::cout << "\n Load balancing---" << std::endl;
 
 	testhashtable1.Clear();
 	std::cout << "Buckets: " << testhashtable1.GetNumberOfElements()  << " Load: " << testhashtable1.GetLoad() << std::endl;
@@ -198,7 +200,7 @@ int main(int argc, char ** argv){
 	testhashtable1.PrettyPrint();
 	std::cout << std::endl;
 
-	std::cout << "\n---" << std::endl;
+	std::cout << "\n Rehashing---" << std::endl;
 
 	mns::HashTable<std::string, int> autosizeht(5, 1.0);
 	autosizeht.Insert("hello", 1);
@@ -210,7 +212,7 @@ int main(int argc, char ** argv){
 	autosizeht.Insert("I've", 6);
 	autosizeht.PrettyPrint();
 
-	std::cout << "\n---" << std::endl;
+	std::cout << "\n Rehashing---" << std::endl;
 
 	mns::HashTable<std::string, int> testhashtable3(5, 1);
 	testhashtable3.Insert("hello", 1);
@@ -234,7 +236,31 @@ int main(int argc, char ** argv){
 
 
 	
-	std::cout << "\n---" << std::endl;
+	std::cout << "\n Iterator---" << std::endl;
+
+	mns::HashTable<std::string, int *> testhashtable4(20);
+	testhashtable4.Insert("Hello", new int(1));
+	testhashtable4.Insert("from", new int(2));
+	testhashtable4.Insert("the", new int(3));
+	testhashtable4.Insert("other", new int(4));
+	testhashtable4.Insert("side", new int(5));
+	testhashtable4.Insert("I", new int(6));
+	testhashtable4.Insert("must've", new int(7));
+	testhashtable4.Insert("called", new int(8));
+	testhashtable4.Insert("a", new int(9));
+	testhashtable4.Insert("thousand", new int(10));
+	testhashtable4.Insert("times", new int(11));
+	testhashtable4.Insert("to", new int(12));
+	testhashtable4.Insert("tell", new int(13));
+	testhashtable4.Insert("you", new int(14));
+	testhashtable4.Insert("I", new int(15));
+	testhashtable4.PrettyPrint();
+	std::cout << std::endl;
+	for(typename mns::HashTable<std::string, int *>::iterator itr = testhashtable4.begin(); itr != testhashtable4.end(); ++itr)
+		std::cout << itr.GetKey() << " " << itr.GetValue() << std::endl;
+
+
+	std::cout << "\n---" << std::endl;	
 	
 	int numbers = 50000;
 	std::vector<int> myvector;
